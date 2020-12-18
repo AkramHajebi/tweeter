@@ -40,3 +40,7 @@ output {
   display: flex;
   justify-content: space-between;
 }
+
+.counter {
+  color: black;
+}
