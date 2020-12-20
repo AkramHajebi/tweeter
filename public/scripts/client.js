@@ -92,24 +92,36 @@ const loadTweets = function() {
   .then((result) => {
     renderTweets(result);
     //console.log('hahhh')
-  });
+  })
+  .catch((err) => console.log(err));
 };
 
 loadTweets();
 
 
-
+  // For submitting form with error handlers
   $('#tweetForm').on('submit', function(event){
   event.preventDefault();
 
   let messageTweet = $(this).serialize();
 
-  $.ajax('/tweets', {method: 'POST', data: messageTweet})
-    
-  .then(function (data) {
-    console.log($('#tweet-text').val());
-  });
+  //console.log(messageTweet);
+  let pureText = messageTweet.slice(5);
+  console.log(pureText);
 
+   
+  if (!pureText ) {
+    alert('Please enter text');
+  } else if (pureText.length > 140) {
+    alert('Your text is too long');
+    //console.log($('#tweet-text').val());
+    
+  } else {
+    $.ajax('/tweets', {method: 'POST', data: messageTweet})
+    .then(function (data) {
+      console.log($('#tweet-text').val());
+    });
+  }
 
 
 })
