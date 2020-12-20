@@ -8,31 +8,11 @@
 $( document ).ready(function() {
   console.log( "ready!" );
 
-  $('#tweetForm').on('submit', function(event){
-  event.preventDefault();
-
-  let messageTweet = $(this).serialize();
-
-  $.ajax('/tweets', {method: 'POST', data: messageTweet})
-    
-  .then(function (data) {
-    console.log($('#tweet-text').val());
-  });
-
-
-
-})
-
-
-
-
-
-
 
 
 
   // Test / driver code (temporary). Eventually will get this from the server.
-  const data = [
+ /*  const data = [
     {
       "user": {
         "name": "Newton",
@@ -57,7 +37,7 @@ $( document ).ready(function() {
     }
   ]
 
-
+ */
 const createTweetElement = function(tweet) {
   
   let days = Math.round((Date.now()-tweet.created_at)/ (24*60*60*1000));
@@ -100,7 +80,39 @@ const renderTweets = function(tweets) {
   
 }
 
-renderTweets(data);
+//renderTweets(data);
+
+const url = "http://localhost:8080/tweets";
+//Function to load the tweets from url
+const loadTweets = function() {
+  $.ajax({
+    url: url,
+    method: 'GET'
+  })
+  .then((result) => {
+    renderTweets(result);
+    //console.log('hahhh')
+  });
+};
+
+loadTweets();
+
+
+
+  $('#tweetForm').on('submit', function(event){
+  event.preventDefault();
+
+  let messageTweet = $(this).serialize();
+
+  $.ajax('/tweets', {method: 'POST', data: messageTweet})
+    
+  .then(function (data) {
+    console.log($('#tweet-text').val());
+  });
+
+
+
+})
 
 
 });
