@@ -8,6 +8,29 @@
 $( document ).ready(function() {
   console.log( "ready!" );
 
+  $('#tweetForm').on('submit', function(event){
+  event.preventDefault();
+
+  let messageTweet = $(this).serialize();
+
+  $.ajax('/tweets', {method: 'POST', data: messageTweet})
+    
+  .then(function (data) {
+    console.log($('#tweet-text').val());
+  });
+
+
+
+})
+
+
+
+
+
+
+
+
+
   // Test / driver code (temporary). Eventually will get this from the server.
   const data = [
     {
