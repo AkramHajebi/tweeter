@@ -91,6 +91,34 @@ $( document ).ready(function() {
 
   loadTweets();
 
+   //---------render Error message to index.html----------------
+   const renderErrors = function(error) {
+    $('#errorMessage').text(error);
+    $('#errorMessage').slideDown("slow");
+
+    let errorStyle = {
+      'border': 'red',
+      'border-style': 'groove',
+      'font-size': 'larger',
+      'font-weight': '700',
+      'text-align': 'center'
+    };    
+    $('#errorMessage').css(errorStyle);
+    };
+
+    //-----------validationError function------
+    const validationError= function(input) {
+
+      let err='';
+      if (!input ) {
+        err ='Please enter text';
+      } else if (input.length > 140) {
+        err ='Your text is too long';
+      }
+      return err;
+    };
+
+
   // For submitting form with error handlers
   $('#tweetForm').on('submit', function(event){
     event.preventDefault();
@@ -98,21 +126,20 @@ $( document ).ready(function() {
     let messageTweet = $(this).serialize();
     //console.log(messageTweet);
     let pureText = messageTweet.slice(5);
-    //console.log(pureText);  
-    if (!pureText ) {
-      alert('Please enter text');
-    } else if (pureText.length > 140) {
-      alert('Your text is too long');
-      //console.log($('#tweet-text').val());
+    let errorMessage = validationError(pureText);
+    //console.log(errorMessage);
+
+    //------check for error------- 
+    if (errorMessage) {
+      renderErrors(errorMessage)
     } else {
+
       $.ajax('/tweets', {method: 'POST', data: messageTweet})
       .then(function (data) {
         //console.log($('#tweet-text').val());
         
-        loadTweets()
-        
-        /* let previousTweets = loadTweets();
-        console.log(previousTweets); */
+        loadTweets()       
+       
       });
     }
   })
