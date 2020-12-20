@@ -38,93 +38,83 @@ $( document ).ready(function() {
   ]
 
  */
-const createTweetElement = function(tweet) {
+  const createTweetElement = function(tweet) {
   
-  let days = Math.round((Date.now()-tweet.created_at)/ (24*60*60*1000));
-  //return $tweet;
-  return $(
-    `<article>
-    <header>
-    <div>
-      <div id='image'> <img src=${tweet.user.avatars}></div> 
-      <span id='name'>${tweet.user.name}</span>
-    </div>
-    <span id='handle'>${tweet.user.handle}</span> 
-  </header>
-  <br>
-
-  <article>
-    <label for="tweet-text">Hello word</label>
-    <textarea name="text" id="tweet-text">${tweet.content.text}</textarea>
-  </article>
-
-  <footer> 
-      <div><span> ${days} days ago</span></div> 
-      <div><img src="/images/profile-hex.png" width="50pxl" height="50pxl"> <br></div>
-  </footer>  
-</article>`
-  )
-}
-
-const renderTweets = function(tweets) {
-  // loops through tweets
-  // calls createTweetElement for each tweet
-  // takes return value and appends it to the tweets container
-
-  for (const tweet of tweets) {
-
-    const $tweet = createTweetElement(tweet);
-    $('#tweets-container').append($tweet); // to add it to the page so we can make sure it's got all the right elements, classes, etc.
+    let days = Math.round((Date.now()-tweet.created_at)/ (24*60*60*1000));
+    //return $tweet;
+    return $(
+      `<article>
+      <header>
+      <div>
+        <div id='image'> <img src=${tweet.user.avatars}></div> 
+        <span id='name'>${tweet.user.name}</span>
+      </div>
+      <span id='handle'>${tweet.user.handle}</span> 
+    </header>
+    <br>
   
+    <article>
+      <label for="tweet-text">Hello word</label>
+      <textarea name="text" id="tweet-text">${tweet.content.text}</textarea>
+    </article>
+  
+    <footer> 
+        <div><span> ${days} days ago</span></div> 
+        <div><img src="/images/profile-hex.png" width="50pxl" height="50pxl"> <br></div>
+    </footer>  
+    </article>`
+    );
   }
   
-}
 
-//renderTweets(data);
+  const renderTweets = function(tweets) {
+    // loops through tweets
+    for (const tweet of tweets) {
+      const $tweet = createTweetElement(tweet);
+      $('#tweets-container').prepend($tweet); // to add it to the page so we can make sure it's got all the right elements, classes, etc.
+    }
+  };
+ 
+  const url = "http://localhost:8080/tweets";
+  //Function to load the tweets from url
+  const loadTweets = function() {
+    $.ajax({
+      url: url,
+      method: 'GET'
+    })
+    .then((result) => {
+      renderTweets(result);
+      //return result;
+    })
+    .catch((err) => console.log(err));
+  };
 
-const url = "http://localhost:8080/tweets";
-//Function to load the tweets from url
-const loadTweets = function() {
-  $.ajax({
-    url: url,
-    method: 'GET'
-  })
-  .then((result) => {
-    renderTweets(result);
-    //console.log('hahhh')
-  })
-  .catch((err) => console.log(err));
-};
-
-loadTweets();
-
+  loadTweets();
 
   // For submitting form with error handlers
   $('#tweetForm').on('submit', function(event){
-  event.preventDefault();
+    event.preventDefault();
 
-  let messageTweet = $(this).serialize();
-
-  //console.log(messageTweet);
-  let pureText = messageTweet.slice(5);
-  console.log(pureText);
-
-   
-  if (!pureText ) {
-    alert('Please enter text');
-  } else if (pureText.length > 140) {
-    alert('Your text is too long');
-    //console.log($('#tweet-text').val());
-    
-  } else {
-    $.ajax('/tweets', {method: 'POST', data: messageTweet})
-    .then(function (data) {
-      console.log($('#tweet-text').val());
-    });
-  }
-
-
-})
-
+    let messageTweet = $(this).serialize();
+    //console.log(messageTweet);
+    let pureText = messageTweet.slice(5);
+    //console.log(pureText);  
+    if (!pureText ) {
+      alert('Please enter text');
+    } else if (pureText.length > 140) {
+      alert('Your text is too long');
+      //console.log($('#tweet-text').val());
+    } else {
+      $.ajax('/tweets', {method: 'POST', data: messageTweet})
+      .then(function (data) {
+        //console.log($('#tweet-text').val());
+        
+        loadTweets()
+        
+        /* let previousTweets = loadTweets();
+        console.log(previousTweets); */
+      });
+    }
+  })
 
 });
